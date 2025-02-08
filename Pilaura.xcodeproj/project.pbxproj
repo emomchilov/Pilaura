@@ -6,13 +6,32 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		414C0DC12D56E08C009D7F22 /* SpotifyiOS in Frameworks */ = {isa = PBXBuildFile; productRef = 414C0DC02D56E08C009D7F22 /* SpotifyiOS */; };
+		414C0DD12D581904009D7F22 /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 414C0DD02D581904009D7F22 /* Config.xcconfig */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
+		414C0DD02D581904009D7F22 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		41FF7D332D56A8250042393D /* Pilaura.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pilaura.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		414C0DC32D56E0E3009D7F22 /* Exceptions for "Pilaura" folder in "Pilaura" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 41FF7D322D56A8250042393D /* Pilaura */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		41FF7D352D56A8250042393D /* Pilaura */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				414C0DC32D56E0E3009D7F22 /* Exceptions for "Pilaura" folder in "Pilaura" target */,
+			);
 			path = Pilaura;
 			sourceTree = "<group>";
 		};
@@ -23,6 +42,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				414C0DC12D56E08C009D7F22 /* SpotifyiOS in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -32,6 +52,7 @@
 		41FF7D2A2D56A8250042393D = {
 			isa = PBXGroup;
 			children = (
+				414C0DD02D581904009D7F22 /* Config.xcconfig */,
 				41FF7D352D56A8250042393D /* Pilaura */,
 				41FF7D342D56A8250042393D /* Products */,
 			);
@@ -65,6 +86,7 @@
 			);
 			name = Pilaura;
 			packageProductDependencies = (
+				414C0DC02D56E08C009D7F22 /* SpotifyiOS */,
 			);
 			productName = Pilaura;
 			productReference = 41FF7D332D56A8250042393D /* Pilaura.app */;
@@ -94,6 +116,9 @@
 			);
 			mainGroup = 41FF7D2A2D56A8250042393D;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				414C0DBF2D56E08C009D7F22 /* XCRemoteSwiftPackageReference "ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 41FF7D342D56A8250042393D /* Products */;
 			projectDirPath = "";
@@ -109,6 +134,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				414C0DD12D581904009D7F22 /* Config.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -127,6 +153,7 @@
 /* Begin XCBuildConfiguration section */
 		41FF7D3F2D56A8270042393D /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 414C0DD02D581904009D7F22 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -190,6 +217,7 @@
 		};
 		41FF7D402D56A8270042393D /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 414C0DD02D581904009D7F22 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -255,6 +283,7 @@
 				DEVELOPMENT_TEAM = PBGHQBRNDT;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Pilaura/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -284,6 +313,7 @@
 				DEVELOPMENT_TEAM = PBGHQBRNDT;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Pilaura/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -324,6 +354,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		414C0DBF2D56E08C009D7F22 /* XCRemoteSwiftPackageReference "ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/spotify/ios-sdk";
+			requirement = {
+				kind = exactVersion;
+				version = 3.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		414C0DC02D56E08C009D7F22 /* SpotifyiOS */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 414C0DBF2D56E08C009D7F22 /* XCRemoteSwiftPackageReference "ios-sdk" */;
+			productName = SpotifyiOS;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 41FF7D2B2D56A8250042393D /* Project object */;
 }
