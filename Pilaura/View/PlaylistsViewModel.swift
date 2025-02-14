@@ -12,6 +12,7 @@ class PlaylistsViewModel: ObservableObject {
     let networkingModel = NetworkingModel.shared
     
     @Published var isPlayingSession = false
+    @Published var startTime = Date()
 
     @Published var playlists: [Playlist]?
     @Published var displayName: String = ""

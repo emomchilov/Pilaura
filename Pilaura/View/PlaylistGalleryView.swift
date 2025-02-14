@@ -30,6 +30,7 @@ struct PlaylistGalleryView: View {
                                 .onTapGesture {
                                     networkingModel.startPlayback(for: playlist.id)
                                     playlistsVM.isPlayingSession.toggle()
+                                    playlistsVM.startTime = Date.now
                                 }
                         }
                     }

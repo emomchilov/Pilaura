@@ -11,11 +11,9 @@ struct VisualizerView: View {
     @EnvironmentObject var playlistsVM: PlaylistsViewModel
     let cycleLength = 20.0
     
-    @State private var startTime = Date.now
-
     var body: some View {
         TimelineView(.animation) { context in
-            let time = context.date.timeIntervalSince(startTime)
+            let time = context.date.timeIntervalSince(playlistsVM.startTime)
             let cycle = time.truncatingRemainder(dividingBy: cycleLength) / cycleLength
             
             let startIndex = Int((time / cycleLength).truncatingRemainder(dividingBy: Double(Color.gradientSets.count)))
@@ -30,6 +28,30 @@ struct VisualizerView: View {
             let formattedTime = formatTimeInterval(time)
             
             ZStack {
+                VStack {
+                    HStack {
+                        Spacer()
+                        VisualizerButton(iconName: "music.note.list") {
+                            playlistsVM.isPlayingSession.toggle()
+                        }
+                    }
+                    .padding()
+                    Spacer()
+                    HStack {
+                        VisualizerButton(iconName: "arrowtriangle.left.fill") {
+                            // TODO: Go back 1 song
+                        }
+                        VisualizerButton(iconName: "playpause.fill") {
+                            // TODO: Play/pause
+                        }
+                        VisualizerButton(iconName: "arrowtriangle.right.fill") {
+                            // TODO: Go forward 1 song
+                        }
+                    }
+                    .padding()
+                    
+                }
+                .zIndex(3)
                 Text(formattedTime)
                     .foregroundColor(Color.white)
                     .font(.title)
@@ -48,11 +70,6 @@ struct VisualizerView: View {
                         .opacity(0.5)
                 }
             }
-            .onChange(of: playlistsVM.isPlayingSession, perform: { value in
-                if value {
-                    startTime = Date.now
-                }
-            })
         }
     }
     
@@ -66,4 +83,5 @@ struct VisualizerView: View {
 
 #Preview {
     VisualizerView()
+        .environmentObject(PlaylistsViewModel())
 }
