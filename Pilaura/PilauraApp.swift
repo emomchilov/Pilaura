@@ -6,12 +6,15 @@
 //
 
 import SwiftUI
+import SpotifyiOS
 
 @main
 struct PilauraApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            HomeView()
         }
     }
 }
