@@ -9,14 +9,18 @@ import SpotifyiOS
 import SwiftUI
 
 class NetworkingModel: ObservableObject {
-    var clientId = ""
-    let redirectUri = "com.Pilaura://callback"
+    private var clientId = ""
+    private let redirectUri = "com.Pilaura://callback"
+    private let baseURL = "https://api.spotify.com/v1/"
+
     static var accessTokenKey = "access-token-key"
     static let shared = NetworkingModel()
         
     let configuration: SPTConfiguration
     
     @Published var appRemote: SPTAppRemote
+    @Published var playlists: [Playlist] = []
+
     
     var accessToken = UserDefaults.standard.string(forKey: NetworkingModel.accessTokenKey) {
         didSet {
@@ -42,6 +46,41 @@ class NetworkingModel: ObservableObject {
         appRemote.connect()
         appRemote.delegate = delegate
     }
+    
+    func fetchUserProfile() async throws -> SpotifyUserProfile {
+        let url = URL(string: "\(baseURL)me")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        if let token = accessToken {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        
+        let (data, _) = try await URLSession.shared.data(for: request)
+        return try JSONDecoder().decode(SpotifyUserProfile.self, from: data)
+    }
 
+    
+    func fetchPlaylists(for userId: String) async throws -> [Playlist] {
+        guard let url = URL(string: "\(baseURL)users/\(userId)/playlists?limit=20") else { return [] }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        if let token = accessToken {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        
+        do {
+            let (data, _) = try await URLSession.shared.data(for: request)
+            let decodedResponse = try JSONDecoder().decode(SpotifyPlaylistsResponse.self, from: data)
+            return decodedResponse.items
+        } catch {
+            print("Error fetching playlists: \(error)")
+            return []
+        }
+    }
+    
+    func startPlayback(for playlistID: String) {
+        appRemote.playerAPI?.play("spotify:playlist:\(playlistID)")
+    }
 }
 

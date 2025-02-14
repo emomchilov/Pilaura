@@ -11,10 +11,11 @@ import SpotifyiOS
 @main
 struct PilauraApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-
+    
     var body: some Scene {
         WindowGroup {
-            HomeView()
+            // TODO: Come back to this!! Don't love this solution, but need to remove the duplicate HomeView that I overlooked earlier when using SceneDelegate
+            EmptyView()
         }
     }
 }
