@@ -12,6 +12,8 @@ import SwiftUI
 class SceneDelegate: UIResponder, UIWindowSceneDelegate, SPTAppRemoteDelegate, SPTAppRemotePlayerStateDelegate {
     var window: UIWindow?
     let networkingModel = NetworkingModel.shared
+    let playlistsViewModel = PlaylistsViewModel()
+
 
     func appRemoteDidEstablishConnection(_ appRemote: SPTAppRemote) {
         networkingModel.appRemote = appRemote
@@ -30,7 +32,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, SPTAppRemoteDelegate, S
     }
         
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        let contentView = HomeView()
+        let contentView = HomeView().environmentObject(playlistsViewModel)
         if let windowScene = scene as? UIWindowScene {
             let window = UIWindow(windowScene: windowScene)
             window.rootViewController = UIHostingController(rootView: contentView)

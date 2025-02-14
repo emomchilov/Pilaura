@@ -43,7 +43,6 @@ class NetworkingModel: ObservableObject {
     
     func connectToSpotify(_ delegate: SPTAppRemoteDelegate, token: String) {
         appRemote.connectionParameters.accessToken = token
-        print("TOKEN: \(token)")
         appRemote.connect()
         appRemote.delegate = delegate
     }
@@ -79,6 +78,9 @@ class NetworkingModel: ObservableObject {
             return []
         }
     }
-
+    
+    func startPlayback(for playlistID: String) {
+        appRemote.playerAPI?.play("spotify:playlist:\(playlistID)")
+    }
 }
 

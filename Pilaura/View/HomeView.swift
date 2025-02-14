@@ -8,14 +8,24 @@
 import SwiftUI
 
 struct HomeView: View {
+    @EnvironmentObject var playlistsVM: PlaylistsViewModel
     @ObservedObject var networkingModel = NetworkingModel.shared
+        
+    private var isSheetPresented: Binding<Bool> {
+        Binding (
+            get: {
+                !networkingModel.appRemote.isConnected || !playlistsVM.isPlayingSession
+            },
+            set: { _ in }
+        )
+    }
+    
     var body: some View {
         VStack {
             // TODO: Add a loading indicator or launch screen while checking for inital token
             VisualizerView()
         }
-        // TODO: Add logic to present sheet when not authenticated OR viewing playlists
-        .sheet(isPresented: .constant(true)) {
+        .sheet(isPresented: isSheetPresented) {
             VStack {
                 if networkingModel.appRemote.isConnected {
                     PlaylistGalleryView()

@@ -8,10 +8,8 @@
 import SwiftUI
 
 struct PlaylistGalleryView: View {
+    @EnvironmentObject var playlistsVM: PlaylistsViewModel
     let networkingModel = NetworkingModel.shared
-    @State var playlists: [Playlist]?
-    @State private var displayName: String = ""
-    @State private var isLoading: Bool = true
 
     let columns = [
         GridItem(.flexible()),
@@ -22,20 +20,26 @@ struct PlaylistGalleryView: View {
     
     var body: some View {
         VStack {
-            if let playlists = playlists {
+            if playlistsVM.isLoading {
+                ProgressView("Loading Playlists...")
+            } else if let playlists = playlistsVM.playlists {
                 ScrollView {
                     LazyVGrid(columns: columns) {
                         ForEach(playlists) { playlist in
                             playlistView(playlist: playlist)
+                                .onTapGesture {
+                                    networkingModel.startPlayback(for: playlist.id)
+                                    playlistsVM.isPlayingSession.toggle()
+                                }
                         }
                     }
                 }
             } else {
-                ProgressView("Loading Playlists...")
+                Text("No playlists found.")
             }
         }
         .task {
-            await loadSpotifyData()
+            await playlistsVM.loadSpotifyData()
         }
     }
     
@@ -46,6 +50,7 @@ struct PlaylistGalleryView: View {
                 AsyncImage(url: URL(string: url)!) { image in
                     image.resizable()
                         .scaledToFill()
+                        .frame(maxWidth: 200, maxHeight: 200)
                 } placeholder: {
                     ProgressView()
                 }
@@ -59,17 +64,17 @@ struct PlaylistGalleryView: View {
     private func loadSpotifyData() async {
         do {
             let userProfile = try await networkingModel.fetchUserProfile()
-            displayName = userProfile.display_name
+            playlistsVM.displayName = userProfile.display_name
             let userPlaylists = try await networkingModel.fetchPlaylists(for: userProfile.id)
-            playlists = userPlaylists
-            isLoading = false
+            playlistsVM.playlists = userPlaylists
+            playlistsVM.isLoading = false
         } catch {
             print("Error fetching Spotify data: \(error)")
-            isLoading = false
+            playlistsVM.isLoading = false
         }
     }
 }
 
 #Preview {
-    PlaylistGalleryView(playlists: Playlist.listOfMockPlaylists)
+    PlaylistGalleryView()
 }
