@@ -12,10 +12,16 @@ struct HomeView: View {
     var body: some View {
         VStack {
             // TODO: Add a loading indicator or launch screen while checking for inital token
-            if networkingModel.appRemote.isConnected {
-                PlaylistGalleryView()
-            } else {
-                AuthenticationView()
+            VisualizerView()
+        }
+        // TODO: Add logic to present sheet when not authenticated OR viewing playlists
+        .sheet(isPresented: .constant(true)) {
+            VStack {
+                if networkingModel.appRemote.isConnected {
+                    PlaylistGalleryView()
+                } else {
+                    AuthenticationView()
+                }
             }
         }
     }
