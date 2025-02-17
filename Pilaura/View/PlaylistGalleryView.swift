@@ -78,4 +78,5 @@ struct PlaylistGalleryView: View {
 
 #Preview {
     PlaylistGalleryView()
+        .environmentObject(PlaylistsViewModel())
 }
