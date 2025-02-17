@@ -16,5 +16,10 @@
 	</array>
 	<key>Secret</key>
 	<string>$(CLIENT_ID)</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Bolina.otf</string>
+		<string>Alika Misely.ttf</string>
+	</array>
 </dict>
 </plist>
