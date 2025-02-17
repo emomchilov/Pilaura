@@ -28,9 +28,7 @@ struct PlaylistGalleryView: View {
                         ForEach(playlists) { playlist in
                             playlistView(playlist: playlist)
                                 .onTapGesture {
-                                    networkingModel.startPlayback(for: playlist.id)
-                                    playlistsVM.isPlayingSession.toggle()
-                                    playlistsVM.startTime = Date.now
+                                    playlistsVM.startPlayback(for: playlist.id)
                                 }
                         }
                     }

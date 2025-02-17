@@ -14,7 +14,7 @@ struct HomeView: View {
     private var isSheetPresented: Binding<Bool> {
         Binding (
             get: {
-                !networkingModel.appRemote.isConnected || !playlistsVM.isPlayingSession
+                !networkingModel.appRemote.isConnected || playlistsVM.showPlaylists
             },
             set: { _ in }
         )
@@ -25,7 +25,9 @@ struct HomeView: View {
             // TODO: Add a loading indicator or launch screen while checking for inital token
             VisualizerView()
         }
-        .sheet(isPresented: isSheetPresented) {
+        .sheet(isPresented: isSheetPresented , onDismiss: {
+            playlistsVM.showPlaylists = false
+        }) {
             VStack {
                 if networkingModel.appRemote.isConnected {
                     PlaylistGalleryView()
