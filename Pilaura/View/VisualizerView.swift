@@ -54,7 +54,7 @@ struct VisualizerView: View {
                 .zIndex(3)
                 Text(formattedTime)
                     .foregroundColor(Color.white)
-                    .font(.vanilla(size: 72))
+                    .font(.alika(size: 72))
                     .bold()
                     .zIndex(2)
                 VStack {

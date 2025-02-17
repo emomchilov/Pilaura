@@ -25,7 +25,7 @@ struct AuthenticationView: View {
             ZStack(alignment: .bottom) {
                 VStack {
                     Text("Welcome to")
-                        .font(.vanilla(size: 48))
+                        .font(.alika(size: 48))
                         .foregroundColor(Color.darkBlue)
                         .padding(0)
                     Text("Pilaura")
@@ -34,7 +34,7 @@ struct AuthenticationView: View {
                         .offset(y: -35)
                         .padding(.bottom, 10)
                     Text("Grant access to spotify to begin.")
-                        .font(.vanilla(size: 24))
+                        .font(.alika(size: 24))
                         .foregroundColor(Color.darkBlue)
                         .padding(.bottom, 30)
                 }
@@ -50,7 +50,7 @@ struct AuthenticationView: View {
                 } label: {
                     HStack {
                         Text("Connect to Spotify")
-                            .font(.vanilla(size: 24))
+                            .font(.alika(size: 24))
                             .foregroundStyle(Color.offWhite)
                             .padding(.horizontal, 20)
                             .padding(.vertical, 20)
@@ -63,8 +63,6 @@ struct AuthenticationView: View {
                     .offset(y: offset)
                 }
             }
-
-
 
             HStack {
                 Spacer()
