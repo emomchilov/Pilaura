@@ -8,11 +8,22 @@
 import SwiftUI
 
 extension Color {
-    // TODO: Custom colors, add more variations :-)
     static let gradientSets: [[Color]] = [
+        [Color.darkPurple, Color.pinkRed, Color.maroon, Color.darkBlue],
+        [Color.midBlue, Color.green, Color.lightGreen, Color.darkGreen],
+        [Color.burntOrange, Color.mutedOrange, Color.yellow, Color.greenTeal],
         [Color.purple, Color.pink, Color.orange, Color.yellow],
         [Color.blue, Color.purple, Color.pink, Color.red],
-        [Color.purple, Color.teal, Color.blue, Color.purple]
+        [Color.purple, Color.teal, Color.blue, Color.purple],
+        [Color.brightPink, Color.brightPurple, Color.darkPurple, Color.darkerPurple],
+        [Color.red, Color.pinkRed, Color.maroon, Color.darkPurple],
+        [Color.darkPurple, Color.pinkRed, Color.maroon, Color.darkBlue],
+        [Color.darkBlue, Color.darkerPurple, Color.darkPurple, Color.purple],
+        [Color.red, Color.burntOrange, Color.lightOrange, Color.yellow],
+        [Color.orange, Color.burntOrange, Color.pink, Color.offWhite],
+        [Color.pinkRed, Color.burntOrange, Color.purple, Color.red],
+        [Color.maroon, Color.brightPurple, Color.pink, Color.darkBlue],
+        [Color.darkerPurple, Color.brightPurple, Color.orange, Color.mutedOrange]
     ]
     
     static func interpolate(from: Color, to: Color, progress: Double) -> Color {

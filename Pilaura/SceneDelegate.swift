@@ -17,6 +17,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, SPTAppRemoteDelegate, S
 
     func appRemoteDidEstablishConnection(_ appRemote: SPTAppRemote) {
         networkingModel.appRemote = appRemote
+        networkingModel.appRemote.playerAPI?.delegate = self
+        appRemote.playerAPI?.subscribe()
     }
     
     func appRemote(_ appRemote: SPTAppRemote, didFailConnectionAttemptWithError error: (any Error)?) {
@@ -28,7 +30,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, SPTAppRemoteDelegate, S
     }
     
     func playerStateDidChange(_ playerState: any SPTAppRemotePlayerState) {
-        //
+        DispatchQueue.main.async {
+            self.playlistsViewModel.isPlaying = !playerState.isPaused
+        }
     }
         
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
@@ -57,5 +61,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, SPTAppRemoteDelegate, S
         } else if let error_description = parameters?[SPTAppRemoteErrorDescriptionKey] {
             print("ERROR: \(error_description)")
         }
+    }
+    
+    func sceneDidDisconnect(_ scene: UIScene) {
+        // This is called when the scene is released by the system.
+        print("App disconnected. Pausing Spotify playback.")
+        playlistsViewModel.pause()
     }
 }

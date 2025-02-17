@@ -6,17 +6,33 @@
 //
 
 import SwiftUI
+import SpotifyiOS
 
 struct VisualizerView: View {
     @EnvironmentObject var playlistsVM: PlaylistsViewModel
+    let networkingModel = NetworkingModel.shared
     let cycleLength = 20.0
     
+    private var playPauseIconName: String {
+        playlistsVM.isPlaying ? "pause.fill" : "play.fill"
+    }
+    
+    @State var totalTimePaused: TimeInterval = 0
+    @State var pauseStartTime: Date?
+    @State var pausedElapsedTime: TimeInterval?
+
     var body: some View {
         TimelineView(.animation) { context in
-            let time = context.date.timeIntervalSince(playlistsVM.startTime)
-            let cycle = time.truncatingRemainder(dividingBy: cycleLength) / cycleLength
+            let rawTime = context.date.timeIntervalSince(playlistsVM.startTime)
+            let elapsedTime = if let timeAtPause = pausedElapsedTime {
+                timeAtPause
+            } else {
+                rawTime - totalTimePaused
+            }
             
-            let startIndex = Int((time / cycleLength).truncatingRemainder(dividingBy: Double(Color.gradientSets.count)))
+            let cycle = elapsedTime.truncatingRemainder(dividingBy: cycleLength) / cycleLength
+            
+            let startIndex = Int((elapsedTime / cycleLength).truncatingRemainder(dividingBy: Double(Color.gradientSets.count)))
             let nextIndex = (startIndex + 1) % Color.gradientSets.count
             
             let currentGradient = Color.gradientSets[startIndex]
@@ -25,27 +41,38 @@ struct VisualizerView: View {
             let interpolatedColors = zip(currentGradient, nextGradient).map {
                 Color.interpolate(from: $0.0, to: $0.1, progress: cycle)
             }
-            let formattedTime = formatTimeInterval(time)
             
+            let formattedTime = formatTimeInterval(elapsedTime)
+
             ZStack {
                 VStack {
                     HStack {
                         Spacer()
                         VisualizerButton(iconName: "music.note.list") {
-                            playlistsVM.isPlayingSession.toggle()
+                            playlistsVM.showPlaylists.toggle()
                         }
                     }
                     .padding()
                     Spacer()
                     HStack {
                         VisualizerButton(iconName: "arrowtriangle.left.fill") {
-                            // TODO: Go back 1 song
+                            playlistsVM.playPreviousTrack()
                         }
-                        VisualizerButton(iconName: "playpause.fill") {
-                            // TODO: Play/pause
+                        VisualizerButton(iconName: playPauseIconName) {
+                            if playlistsVM.isPlaying {
+                                playlistsVM.pause()
+                                self.pauseStartTime = Date.now
+                                self.pausedElapsedTime = elapsedTime
+                            } else {
+                                playlistsVM.resume()
+                                if let start = pauseStartTime {
+                                    totalTimePaused += Date.now.timeIntervalSince(start)
+                                }
+                                clearPauseTracker()
+                            }
                         }
                         VisualizerButton(iconName: "arrowtriangle.right.fill") {
-                            // TODO: Go forward 1 song
+                            playlistsVM.playNextTrack()
                         }
                     }
                     .padding()
@@ -54,7 +81,7 @@ struct VisualizerView: View {
                 .zIndex(3)
                 Text(formattedTime)
                     .foregroundColor(Color.white)
-                    .font(.alika(size: 72))
+                    .font(.alika(size: 100))
                     .bold()
                     .zIndex(2)
                 VStack {
@@ -70,7 +97,16 @@ struct VisualizerView: View {
                         .opacity(0.5)
                 }
             }
+            .onChange(of: playlistsVM.startTime) { _ in
+                clearPauseTracker()
+                self.totalTimePaused = 0
+            }
         }
+    }
+    
+    private func clearPauseTracker() {
+        self.pauseStartTime = nil
+        self.pausedElapsedTime = nil
     }
     
     private func formatTimeInterval(_ interval: TimeInterval) -> String {

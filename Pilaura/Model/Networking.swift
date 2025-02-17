@@ -38,7 +38,7 @@ class NetworkingModel: ObservableObject {
     }
     
     func authorize() {
-        appRemote.authorizeAndPlayURI("")
+        appRemote.authorizeAndPlayURI("spotify:track:0")
     }
     
     func connectToSpotify(_ delegate: SPTAppRemoteDelegate, token: String) {
@@ -77,10 +77,6 @@ class NetworkingModel: ObservableObject {
             print("Error fetching playlists: \(error)")
             return []
         }
-    }
-    
-    func startPlayback(for playlistID: String) {
-        appRemote.playerAPI?.play("spotify:playlist:\(playlistID)")
     }
 }
 
