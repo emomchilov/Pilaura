@@ -9,9 +9,9 @@ import SwiftUI
 
 struct PlaylistGalleryView: View {
     @EnvironmentObject var playlistsVM: PlaylistsViewModel
-    let networkingModel = NetworkingModel.shared
+    private let networkingModel = NetworkingModel.shared
     
-    let columns = [
+    private let columns = [
         GridItem(.flexible()),
         GridItem(.flexible()),
         GridItem(.flexible())
@@ -20,11 +20,6 @@ struct PlaylistGalleryView: View {
     private var fontSize: CGFloat {
         UIDevice.current.systemName == "iOS" ? 14 : 30
     }
-    
-    private var maxImageSize: CGFloat {
-        UIDevice.current.systemName == "iOS" ? 100 : 200
-    }
-
     
     var body: some View {
         VStack {
