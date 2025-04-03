@@ -92,7 +92,7 @@ struct VisualizerView: View {
                 ForEach(0..<4, id: \.self) { index in
                     Circle()
                         .fill(RadialGradient(
-                            gradient: Gradient(colors: interpolatedColors), center: .center, startRadius: CGFloat(100 + index * 30), endRadius: CGFloat(500 - index * 40)))
+                            gradient: Gradient(colors: interpolatedColors), center: .center, startRadius: CGFloat(50 + index * 30), endRadius: CGFloat(500 - index * 40)))
                         .blur(radius: 20)
                         .opacity(0.5)
                 }

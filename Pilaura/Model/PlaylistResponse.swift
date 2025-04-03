@@ -19,7 +19,7 @@ struct Playlist: Codable, Identifiable {
         let url: String
     }
     
-    static var mockPlaylist1 = Playlist(id: "1a7MNhk3aHFNueF6mJB3Hg", name: "onyx reformer 2/3", images: [PlaylistImage(url: "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84a47fc38c80093da757cdc46f")])
+    static var mockPlaylist1 = Playlist(id: "1a7MNhk3aHFNueF6mJB3Hg", name: "onyx refo", images: [PlaylistImage(url: "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84a47fc38c80093da757cdc46f")])
     
     static var mockPlaylist2 = Playlist(id: "1zNJXD0Ne7WHMMPu4YrxYE", name: "onyx reformer 11/24", images: [PlaylistImage(url: "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da843d6d556c28ee4b228c087ca9")])
     

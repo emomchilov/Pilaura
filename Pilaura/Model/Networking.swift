@@ -61,7 +61,7 @@ class NetworkingModel: ObservableObject {
 
     
     func fetchPlaylists(for userId: String) async throws -> [Playlist] {
-        guard let url = URL(string: "\(baseURL)users/\(userId)/playlists?limit=20") else { return [] }
+        guard let url = URL(string: "\(baseURL)users/\(userId)/playlists?limit=30") else { return [] }
         
         var request = URLRequest(url: url)
         request.httpMethod = "GET"

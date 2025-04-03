@@ -10,13 +10,21 @@ import SwiftUI
 struct PlaylistGalleryView: View {
     @EnvironmentObject var playlistsVM: PlaylistsViewModel
     let networkingModel = NetworkingModel.shared
-
+    
     let columns = [
         GridItem(.flexible()),
         GridItem(.flexible()),
         GridItem(.flexible())
     ]
     
+    private var fontSize: CGFloat {
+        UIDevice.current.systemName == "iOS" ? 14 : 30
+    }
+    
+    private var maxImageSize: CGFloat {
+        UIDevice.current.systemName == "iOS" ? 100 : 200
+    }
+
     
     var body: some View {
         VStack {
@@ -49,12 +57,16 @@ struct PlaylistGalleryView: View {
                 AsyncImage(url: URL(string: url)!) { image in
                     image.resizable()
                         .scaledToFill()
-                        .frame(maxWidth: 200, maxHeight: 200)
+                        .frame(maxWidth: 200)
+                        .clipped()
                 } placeholder: {
                     ProgressView()
+                        .frame(maxWidth: 200)
                 }
                 Text(playlist.name)
-                    .font(.largeTitle)
+                    .font(.alika(size: fontSize))
+                    .lineLimit(1)
+
             }
         }
         .padding(20)
@@ -73,8 +85,17 @@ struct PlaylistGalleryView: View {
         }
     }
 }
-
-#Preview {
-    PlaylistGalleryView()
-        .environmentObject(PlaylistsViewModel())
-}
+    
+    struct PlaylistGalleryView_Previews: PreviewProvider {
+        static var previews: some View {
+            let vm: PlaylistsViewModel = {
+                let playlistVM = PlaylistsViewModel()
+                playlistVM.playlists = [Playlist.mockPlaylist1, Playlist.mockPlaylist2, Playlist.mockPlaylist3, Playlist.mockPlaylist4]
+                return playlistVM
+            }()
+            VStack {
+                PlaylistGalleryView()
+                    .environmentObject(vm)
+            }
+        }
+    }
