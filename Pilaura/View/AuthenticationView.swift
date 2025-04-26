@@ -12,7 +12,6 @@ struct AuthenticationView: View {
     let networkingModel = NetworkingModel.shared
     var body: some View {
         VStack {
-            Spacer()
             HStack {
                 Image(.singleStar)
                     .resizable()
@@ -22,6 +21,8 @@ struct AuthenticationView: View {
             }
             .padding(.bottom, 20)
             .padding(.leading, 10)
+            Spacer()
+
             ZStack(alignment: .bottom) {
                 VStack {
                     Text("Welcome to")
@@ -63,7 +64,31 @@ struct AuthenticationView: View {
                     .offset(y: offset)
                 }
             }
+                        
+            VStack(spacing: 0) {
+                Text("or")
+                    .font(.alika(size: 20))
+                    .foregroundStyle(Color.midBlue)
 
+                Button {
+                    networkingModel.userBypassedAuthentication = true
+                } label: {
+                    HStack {
+                        Text("Use Timer Only")
+                            .font(.alika(size: 24))
+                            .foregroundStyle(Color.midBlue)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 20)
+                            .background(
+                                RoundedRectangle(cornerRadius: 10.0)
+                                    .strokeBorder(Color.midBlue, lineWidth: 1)
+                                    .frame(height: 50)
+                            )
+                    }
+                }
+            }
+            .offset(y: offset)
+            Spacer()
             HStack {
                 Spacer()
                 Image(.twoStars)
@@ -74,7 +99,6 @@ struct AuthenticationView: View {
             }
             .padding(.top, 20)
             .padding(.trailing, 10)
-            Spacer()
         }
     }
 

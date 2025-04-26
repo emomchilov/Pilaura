@@ -7,6 +7,7 @@
 
 import SpotifyiOS
 import SwiftUI
+import Combine
 
 class NetworkingModel: ObservableObject {
     private var clientId = ""
@@ -20,8 +21,12 @@ class NetworkingModel: ObservableObject {
     
     @Published var appRemote: SPTAppRemote
     @Published var playlists: [Playlist] = []
+    @Published var userBypassedAuthentication: Bool = false
 
-    
+    @Published private(set) var isAuthenticated: Bool = false
+
+    private var cancellables = Set<AnyCancellable>()
+
     var accessToken = UserDefaults.standard.string(forKey: NetworkingModel.accessTokenKey) {
         didSet {
             let defaults = UserDefaults.standard
@@ -35,6 +40,15 @@ class NetworkingModel: ObservableObject {
         }
         self.configuration = SPTConfiguration(clientID: clientId, redirectURL: URL(string: redirectUri)!)
         self.appRemote = SPTAppRemote(configuration: configuration, logLevel: .debug)
+        Publishers
+            .CombineLatest($appRemote, $userBypassedAuthentication)
+            .map { appRemote, userBypassed in
+                return appRemote.isConnected || userBypassed
+            }
+            .sink { [weak self] auth in
+                self?.isAuthenticated = auth
+            }
+            .store(in: &cancellables)
     }
     
     func authorize() {

@@ -11,29 +11,37 @@ struct HomeView: View {
     @EnvironmentObject var playlistsVM: PlaylistsViewModel
     @ObservedObject var networkingModel = NetworkingModel.shared
         
-    private var isSheetPresented: Binding<Bool> {
-        Binding (
-            get: {
-                !networkingModel.appRemote.isConnected || playlistsVM.showPlaylists
-            },
-            set: { _ in }
-        )
-    }
+    @State private var isSheetPresented = true
     
     var body: some View {
         VStack {
             // TODO: Add a loading indicator or launch screen while checking for inital token
             VisualizerView()
         }
-        .sheet(isPresented: isSheetPresented , onDismiss: {
+        .onReceive(networkingModel.$isAuthenticated
+            .combineLatest(playlistsVM.$showPlaylists, networkingModel.$userBypassedAuthentication)) { isAuthenticated, showPlaylists, userBypassed in
+                if isAuthenticated {
+                    if userBypassed {
+                        isSheetPresented = false
+                    } else {
+                        isSheetPresented = showPlaylists
+                    }
+                }
+        }
+        .sheet(isPresented: $isSheetPresented , onDismiss: {
             playlistsVM.showPlaylists = false
         }) {
             VStack {
-                if networkingModel.appRemote.isConnected {
-                    PlaylistGalleryView()
+                if networkingModel.isAuthenticated {
+                    if networkingModel.appRemote.isConnected {
+                        PlaylistGalleryView()
+                    } else {
+                        AuthenticationView()
+                    }
                 } else {
                     AuthenticationView()
                 }
+
             }
         }
     }
