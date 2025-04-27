@@ -21,13 +21,10 @@ struct VisualizerView: View {
     private var sheetIcon: String {
         networkingModel.userBypassedAuthentication ? "music.note" : "music.note.list"
     }
-    
-    @State var totalTimePaused: TimeInterval = 0
-    @State var pauseStartTime: Date?
-    @State var pausedElapsedTime: TimeInterval?
 
     var body: some View {
         TimelineView(.animation) { context in
+            
             let elapsedTime = timerVM.elapsedTime(currentDate: context.date)
             
             let cycle = elapsedTime.truncatingRemainder(dividingBy: timerVM.cycleLength) / timerVM.cycleLength
@@ -57,7 +54,7 @@ struct VisualizerView: View {
                             if networkingModel.userBypassedAuthentication {
                                 networkingModel.userBypassedAuthentication = false
                             } else {
-                                playlistsVM.showPlaylists.toggle()
+                                playlistsVM.showPlaylists = true
                             }
                         }
                     }

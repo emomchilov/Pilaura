@@ -19,7 +19,7 @@ struct AuthenticationView: View {
                     .frame(width: 75)
                 Spacer()
             }
-            .padding(.bottom, 20)
+            .padding(.vertical, 10)
             .padding(.leading, 10)
             Spacer()
 
@@ -86,6 +86,7 @@ struct AuthenticationView: View {
                             )
                     }
                 }
+                .padding(.bottom, 15)
             }
             .offset(y: offset)
             Spacer()
