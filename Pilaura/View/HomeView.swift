@@ -9,6 +9,7 @@ import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject var playlistsVM: PlaylistsViewModel
+    @EnvironmentObject var timerVM: TimerViewModel
     @ObservedObject var networkingModel = NetworkingModel.shared
         
     @State private var isSheetPresented = true
@@ -23,14 +24,15 @@ struct HomeView: View {
                 if isAuthenticated {
                     if userBypassed {
                         isSheetPresented = false
+                        timerVM.restart()
                     } else {
                         isSheetPresented = showPlaylists
                     }
+                } else {
+                    isSheetPresented = true
                 }
         }
-        .sheet(isPresented: $isSheetPresented , onDismiss: {
-            playlistsVM.showPlaylists = false
-        }) {
+        .sheet(isPresented: $isSheetPresented) {
             VStack {
                 if networkingModel.isAuthenticated {
                     if networkingModel.appRemote.isConnected {
@@ -49,5 +51,6 @@ struct HomeView: View {
 
 #Preview {
     HomeView()
+        .environmentObject(TimerViewModel())
         .environmentObject(PlaylistsViewModel())
 }
