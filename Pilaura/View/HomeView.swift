@@ -9,31 +9,41 @@ import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject var playlistsVM: PlaylistsViewModel
+    @EnvironmentObject var timerVM: TimerViewModel
     @ObservedObject var networkingModel = NetworkingModel.shared
         
-    private var isSheetPresented: Binding<Bool> {
-        Binding (
-            get: {
-                !networkingModel.appRemote.isConnected || playlistsVM.showPlaylists
-            },
-            set: { _ in }
-        )
-    }
+    @State private var isSheetPresented = true
     
     var body: some View {
         VStack {
             // TODO: Add a loading indicator or launch screen while checking for inital token
             VisualizerView()
         }
-        .sheet(isPresented: isSheetPresented , onDismiss: {
-            playlistsVM.showPlaylists = false
-        }) {
+        .onReceive(networkingModel.$isAuthenticated
+            .combineLatest(playlistsVM.$showPlaylists, networkingModel.$userBypassedAuthentication)) { isAuthenticated, showPlaylists, userBypassed in
+                if isAuthenticated {
+                    if userBypassed {
+                        isSheetPresented = false
+                        timerVM.restart()
+                    } else {
+                        isSheetPresented = showPlaylists
+                    }
+                } else {
+                    isSheetPresented = true
+                }
+        }
+        .sheet(isPresented: $isSheetPresented) {
             VStack {
-                if networkingModel.appRemote.isConnected {
-                    PlaylistGalleryView()
+                if networkingModel.isAuthenticated {
+                    if networkingModel.appRemote.isConnected {
+                        PlaylistGalleryView()
+                    } else {
+                        AuthenticationView()
+                    }
                 } else {
                     AuthenticationView()
                 }
+
             }
         }
     }
@@ -41,5 +51,6 @@ struct HomeView: View {
 
 #Preview {
     HomeView()
+        .environmentObject(TimerViewModel())
         .environmentObject(PlaylistsViewModel())
 }

@@ -9,30 +9,27 @@ import SwiftUI
 import SpotifyiOS
 
 struct VisualizerView: View {
+    @EnvironmentObject var timerVM: TimerViewModel
     @EnvironmentObject var playlistsVM: PlaylistsViewModel
     let networkingModel = NetworkingModel.shared
     let cycleLength = 20.0
     
     private var playPauseIconName: String {
-        playlistsVM.isPlaying ? "pause.fill" : "play.fill"
+        timerVM.isRunning ? "pause.fill" : "play.fill"
     }
     
-    @State var totalTimePaused: TimeInterval = 0
-    @State var pauseStartTime: Date?
-    @State var pausedElapsedTime: TimeInterval?
+    private var sheetIcon: String {
+        networkingModel.userBypassedAuthentication ? "music.note" : "music.note.list"
+    }
 
     var body: some View {
         TimelineView(.animation) { context in
-            let rawTime = context.date.timeIntervalSince(playlistsVM.startTime)
-            let elapsedTime = if let timeAtPause = pausedElapsedTime {
-                timeAtPause
-            } else {
-                rawTime - totalTimePaused
-            }
             
-            let cycle = elapsedTime.truncatingRemainder(dividingBy: cycleLength) / cycleLength
+            let elapsedTime = timerVM.elapsedTime(currentDate: context.date)
             
-            let startIndex = Int((elapsedTime / cycleLength).truncatingRemainder(dividingBy: Double(Color.gradientSets.count)))
+            let cycle = elapsedTime.truncatingRemainder(dividingBy: timerVM.cycleLength) / timerVM.cycleLength
+            
+            let startIndex = Int((elapsedTime / timerVM.cycleLength).truncatingRemainder(dividingBy: Double(Color.gradientSets.count)))
             let nextIndex = (startIndex + 1) % Color.gradientSets.count
             
             let currentGradient = Color.gradientSets[startIndex]
@@ -47,32 +44,41 @@ struct VisualizerView: View {
             ZStack {
                 VStack {
                     HStack {
+                        if networkingModel.userBypassedAuthentication {
+                            VisualizerButton(iconName: "gobackward") {
+                                timerVM.restart()
+                            }
+                        }
                         Spacer()
-                        VisualizerButton(iconName: "music.note.list") {
-                            playlistsVM.showPlaylists.toggle()
+                        VisualizerButton(iconName: sheetIcon) {
+                            if networkingModel.userBypassedAuthentication {
+                                networkingModel.userBypassedAuthentication = false
+                            } else {
+                                playlistsVM.showPlaylists = true
+                            }
                         }
                     }
                     .padding()
                     Spacer()
                     HStack {
-                        VisualizerButton(iconName: "arrowtriangle.left.fill") {
-                            playlistsVM.playPreviousTrack()
-                        }
-                        VisualizerButton(iconName: playPauseIconName) {
-                            if playlistsVM.isPlaying {
-                                playlistsVM.pause()
-                                self.pauseStartTime = Date.now
-                                self.pausedElapsedTime = elapsedTime
-                            } else {
-                                playlistsVM.resume()
-                                if let start = pauseStartTime {
-                                    totalTimePaused += Date.now.timeIntervalSince(start)
-                                }
-                                clearPauseTracker()
+                        if !networkingModel.userBypassedAuthentication {
+                            VisualizerButton(iconName: "arrowtriangle.left.fill") {
+                                playlistsVM.playPreviousTrack()
                             }
                         }
-                        VisualizerButton(iconName: "arrowtriangle.right.fill") {
-                            playlistsVM.playNextTrack()
+                        VisualizerButton(iconName: playPauseIconName) {
+                            if timerVM.isRunning {
+                                playlistsVM.pause()
+                                timerVM.pause(currentDate: Date())
+                            } else {
+                                playlistsVM.resume()
+                                timerVM.resume(currentDate: Date())
+                            }
+                        }
+                        if !networkingModel.userBypassedAuthentication {
+                            VisualizerButton(iconName: "arrowtriangle.right.fill") {
+                                playlistsVM.playNextTrack()
+                            }
                         }
                     }
                     .padding()
@@ -98,15 +104,12 @@ struct VisualizerView: View {
                 }
             }
             .onChange(of: playlistsVM.startTime) { _ in
-                clearPauseTracker()
-                self.totalTimePaused = 0
+                timerVM.restart()
+            }
+            .onAppear {
+                timerVM.isRunning = true
             }
         }
-    }
-    
-    private func clearPauseTracker() {
-        self.pauseStartTime = nil
-        self.pausedElapsedTime = nil
     }
     
     private func formatTimeInterval(_ interval: TimeInterval) -> String {
@@ -119,5 +122,6 @@ struct VisualizerView: View {
 
 #Preview {
     VisualizerView()
+        .environmentObject(TimerViewModel())
         .environmentObject(PlaylistsViewModel())
 }

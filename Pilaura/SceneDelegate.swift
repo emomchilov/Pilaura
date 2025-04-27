@@ -13,6 +13,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, SPTAppRemoteDelegate, S
     var window: UIWindow?
     let networkingModel = NetworkingModel.shared
     let playlistsViewModel = PlaylistsViewModel()
+    let timerViewModel = TimerViewModel()
 
 
     func appRemoteDidEstablishConnection(_ appRemote: SPTAppRemote) {
@@ -36,7 +37,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, SPTAppRemoteDelegate, S
     }
         
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        let contentView = HomeView().environmentObject(playlistsViewModel)
+        let contentView = HomeView()
+            .environmentObject(timerViewModel)
+            .environmentObject(playlistsViewModel)
         if let windowScene = scene as? UIWindowScene {
             let window = UIWindow(windowScene: windowScene)
             window.rootViewController = UIHostingController(rootView: contentView)
