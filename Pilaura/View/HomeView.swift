@@ -10,7 +10,7 @@ import SwiftUI
 struct HomeView: View {
     @EnvironmentObject var playlistsVM: PlaylistsViewModel
     @EnvironmentObject var timerVM: TimerViewModel
-    @ObservedObject var networkingModel = NetworkingModel.shared
+    @ObservedObject var musicService = MusicService.shared
         
     @State private var isSheetPresented = true
     
@@ -19,8 +19,8 @@ struct HomeView: View {
             // TODO: Add a loading indicator or launch screen while checking for inital token
             VisualizerView()
         }
-        .onReceive(networkingModel.$isAuthenticated
-            .combineLatest(playlistsVM.$showPlaylists, networkingModel.$userBypassedAuthentication)) { isAuthenticated, showPlaylists, userBypassed in
+        .onReceive(musicService.$isAuthenticated
+            .combineLatest(playlistsVM.$showPlaylists, musicService.$userBypassedAuthentication)) { isAuthenticated, showPlaylists, userBypassed in
                 if isAuthenticated {
                     if userBypassed {
                         isSheetPresented = false
@@ -34,16 +34,11 @@ struct HomeView: View {
         }
         .sheet(isPresented: $isSheetPresented) {
             VStack {
-                if networkingModel.isAuthenticated {
-                    if networkingModel.appRemote.isConnected {
-                        PlaylistGalleryView()
-                    } else {
-                        AuthenticationView()
-                    }
+                if musicService.isMusicConnected {
+                    PlaylistGalleryView()
                 } else {
                     AuthenticationView()
                 }
-
             }
         }
     }

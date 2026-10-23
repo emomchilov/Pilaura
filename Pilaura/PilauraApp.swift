@@ -6,16 +6,17 @@
 //
 
 import SwiftUI
-import SpotifyiOS
 
 @main
 struct PilauraApp: App {
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    
+    @StateObject private var timerViewModel = TimerViewModel()
+    @StateObject private var playlistsViewModel = PlaylistsViewModel()
+
     var body: some Scene {
         WindowGroup {
-            // TODO: Come back to this!! Don't love this solution, but need to remove the duplicate HomeView that I overlooked earlier when using SceneDelegate
-            EmptyView()
+            HomeView()
+                .environmentObject(timerViewModel)
+                .environmentObject(playlistsViewModel)
         }
     }
 }

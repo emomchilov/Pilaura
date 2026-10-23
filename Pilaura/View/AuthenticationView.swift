@@ -6,10 +6,55 @@
 //
 
 import SwiftUI
+import MusicKit
 
 struct AuthenticationView: View {
     @ScaledMetric private var offset = 44
-    let networkingModel = NetworkingModel.shared
+    @ObservedObject var musicService = MusicService.shared
+    @State private var isShowingSubscriptionOffer = false
+
+    private var needsSubscription: Bool {
+        musicService.authorizationStatus == .authorized && !musicService.canPlayCatalogContent
+    }
+
+    private var promptText: String {
+        switch musicService.authorizationStatus {
+        case .denied, .restricted:
+            return "Allow Apple Music access in Settings to begin."
+        default:
+            return needsSubscription ? "An Apple Music subscription is needed to play your playlists." : "Grant access to Apple Music to begin."
+        }
+    }
+
+    private var buttonTitle: String {
+        switch musicService.authorizationStatus {
+        case .denied, .restricted:
+            return "Open Settings"
+        default:
+            return needsSubscription ? "Get Apple Music" : "Connect Apple Music"
+        }
+    }
+
+    private func connect() {
+        switch musicService.authorizationStatus {
+        case .denied, .restricted:
+            if let url = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(url)
+            }
+        default:
+            if needsSubscription {
+                isShowingSubscriptionOffer = true
+            } else {
+                Task {
+                    await musicService.authorize()
+                    if needsSubscription {
+                        isShowingSubscriptionOffer = true
+                    }
+                }
+            }
+        }
+    }
+
     var body: some View {
         VStack {
             HStack {
@@ -34,7 +79,7 @@ struct AuthenticationView: View {
                         .foregroundColor(Color.darkBlue)
                         .offset(y: -35)
                         .padding(.bottom, 10)
-                    Text("Grant access to spotify to begin.")
+                    Text(promptText)
                         .font(.alika(size: 24))
                         .foregroundColor(Color.darkBlue)
                         .padding(.bottom, 30)
@@ -47,10 +92,10 @@ struct AuthenticationView: View {
                         .stroke(Color.darkBlue, lineWidth: 2)
                 )
                 Button {
-                    networkingModel.authorize()
+                    connect()
                 } label: {
                     HStack {
-                        Text("Connect to Spotify")
+                        Text(buttonTitle)
                             .font(.alika(size: 24))
                             .foregroundStyle(Color.offWhite)
                             .padding(.horizontal, 20)
@@ -71,7 +116,7 @@ struct AuthenticationView: View {
                     .foregroundStyle(Color.midBlue)
 
                 Button {
-                    networkingModel.userBypassedAuthentication = true
+                    musicService.userBypassedAuthentication = true
                 } label: {
                     HStack {
                         Text("Use Timer Only")
@@ -101,6 +146,7 @@ struct AuthenticationView: View {
             .padding(.top, 20)
             .padding(.trailing, 10)
         }
+        .musicSubscriptionOffer(isPresented: $isShowingSubscriptionOffer, options: MusicSubscriptionOffer.Options(messageIdentifier: .playMusic))
     }
 
 }

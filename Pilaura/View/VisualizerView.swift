@@ -6,12 +6,11 @@
 //
 
 import SwiftUI
-import SpotifyiOS
 
 struct VisualizerView: View {
     @EnvironmentObject var timerVM: TimerViewModel
     @EnvironmentObject var playlistsVM: PlaylistsViewModel
-    let networkingModel = NetworkingModel.shared
+    let musicService = MusicService.shared
     let cycleLength = 20.0
     
     private var playPauseIconName: String {
@@ -19,7 +18,7 @@ struct VisualizerView: View {
     }
     
     private var sheetIcon: String {
-        networkingModel.userBypassedAuthentication ? "music.note" : "music.note.list"
+        musicService.userBypassedAuthentication ? "music.note" : "music.note.list"
     }
 
     var body: some View {
@@ -44,15 +43,15 @@ struct VisualizerView: View {
             ZStack {
                 VStack {
                     HStack {
-                        if networkingModel.userBypassedAuthentication {
+                        if musicService.userBypassedAuthentication {
                             VisualizerButton(iconName: "gobackward") {
                                 timerVM.restart()
                             }
                         }
                         Spacer()
                         VisualizerButton(iconName: sheetIcon) {
-                            if networkingModel.userBypassedAuthentication {
-                                networkingModel.userBypassedAuthentication = false
+                            if musicService.userBypassedAuthentication {
+                                musicService.userBypassedAuthentication = false
                             } else {
                                 playlistsVM.showPlaylists = true
                             }
@@ -61,7 +60,7 @@ struct VisualizerView: View {
                     .padding()
                     Spacer()
                     HStack {
-                        if !networkingModel.userBypassedAuthentication {
+                        if !musicService.userBypassedAuthentication {
                             VisualizerButton(iconName: "arrowtriangle.left.fill") {
                                 playlistsVM.playPreviousTrack()
                             }
@@ -75,7 +74,7 @@ struct VisualizerView: View {
                                 timerVM.resume(currentDate: Date())
                             }
                         }
-                        if !networkingModel.userBypassedAuthentication {
+                        if !musicService.userBypassedAuthentication {
                             VisualizerButton(iconName: "arrowtriangle.right.fill") {
                                 playlistsVM.playNextTrack()
                             }
